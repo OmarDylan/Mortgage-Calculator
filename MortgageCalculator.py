@@ -1,9 +1,10 @@
 #@author Omar Abou
 
-import pandas as pd  # This lets us work with data in a table-like format
+import pandas as pd  
 
 class MortgageCalculator:
-    # This sets up the calculator with all the information about the mortgage
+    
+    #  Sets up the calculator with all the information about the mortgage for the user input
     def __init__(self, amount_borrowed, years, annual_interest, annual_property_tax, annual_property_insurance, annual_pmi_rate):
         self.amount = float(amount_borrowed)
         self.years = int(years)
@@ -14,12 +15,12 @@ class MortgageCalculator:
         self.monthly_interest = (self.annual_interest / 100) / 12
         self.loan_term = self.years * 12
 
-    # This calculates the total monthly payment
+    # Calculates the total monthly payment
     def get_monthly_payment(self):
         if self.monthly_interest == 0:
             monthly_payment = self.amount / self.loan_term
         else:
-            # This is the formula for calculating the monthly mortgage payment
+            # Formula for calculating the monthly mortgage payment
             monthly_payment = (self.monthly_interest * self.amount * (1 + self.monthly_interest) ** self.loan_term) / ((1 + self.monthly_interest) ** self.loan_term - 1)
 
         # Add other monthly costs
@@ -29,7 +30,7 @@ class MortgageCalculator:
 
         return monthly_payment
 
-    # This creates a detailed breakdown of each payment over the life of the loan
+    # Creates a detailed breakdown of each payment over the life of the loan
     def generate_amortization_table(self):
         monthly_payment = self.get_monthly_payment()
         balance = self.amount
@@ -40,7 +41,7 @@ class MortgageCalculator:
             principal_payment = monthly_payment - interest_payment - (self.annual_property_tax / 12) - (self.annual_property_insurance / 12) - ((self.annual_pmi_rate / 100 * self.amount) / 12)
             balance -= principal_payment
 
-            # Add this month's payment information to the table
+            # Add this month's payment information to the amortization table
             amortization_table.append({
                 'Month': month,
                 'Payment': monthly_payment,
@@ -54,17 +55,17 @@ class MortgageCalculator:
 
         return pd.DataFrame(amortization_table)
 
-    # This calculates the total interest paid over the life of the loan
+    # Calculates the total interest paid over the life of the loan
     def total_interest_paid(self):
         amortization_table = self.generate_amortization_table()
         return amortization_table['Interest'].sum()
 
-    # This calculates the total amount paid over the life of the loan
+    # Calculates the total amount paid over the life of the loan
     def total_cost(self):
         amortization_table = self.generate_amortization_table()
         return amortization_table['Payment'].sum()
     
-# This function makes sure the user enters a valid number
+# This makes sure the user enters a valid number
 def get_float_input(prompt):
     while True:
         try:
@@ -83,7 +84,7 @@ annual_property_tax = get_float_input("Enter the annual property tax: ")
 annual_property_insurance = get_float_input("Enter the annual property insurance cost: ")
 annual_pmi_rate = get_float_input("Enter the annual private mortgage insurance rate (%): ")
 
-# This function prints out the payment breakdown table
+# This prints out the payment breakdown table
 def print_amortization_table(table, num_rows= int(years * 12)):
     print("\nAmortization Table:")
     print(table.head(num_rows).to_string(index=False, float_format='${:,.2f}'.format))
